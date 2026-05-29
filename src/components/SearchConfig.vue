@@ -257,7 +257,7 @@ const resetToDefault = () => {
       selectedDiskTypes.value = diskTypes.map(d => d.id);
       customChannels.value = [];
       detectionSettings.value = {
-        enabled: false
+        enabled: true
       };
       saveConfig();
     }
@@ -350,7 +350,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="config-container">
+  <div class="config-container config-reset-root">
     <!-- 头部 -->
     <div class="config-header">
       <div>
@@ -1698,6 +1698,16 @@ onMounted(() => {
 
   .export-code {
     font-size: 0.75rem;
+  }
+}
+
+/* 强制重置 theme6 样式 */
+:deep(body.theme6) & {
+  .config-page-container,
+  .search-config-root {
+    background: hsl(var(--card)) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 }
 </style>
