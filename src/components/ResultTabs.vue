@@ -681,7 +681,7 @@ onUnmounted(() => {
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
         </svg>
       </div>
-      <p class="empty-title">输入关键词开始搜索</p>
+      <p class="empty-title">一键检索全网网盘资源</p>
     </div>
     
     <!-- 搜索中状态 -->
