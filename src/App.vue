@@ -707,6 +707,40 @@ watch(
   { deep: true }
 );
 
+// 全局启用 theme6（壁纸背景常驻）
+document.body.classList.add('theme6');
+// 初始页面模式
+document.body.classList.add('page-search');
+
+// 根据当前页面切换 page-mode
+watch(
+  () => currentPage.value,
+  (newPage) => {
+    document.body.classList.remove('page-search', 'page-api', 'page-config');
+    if (newPage === 'search' || newPage === 'accounts' || newPage === 'status') {
+      // 搜索、账号、配置页面用不同模式
+    }
+    if (newPage === 'search') {
+      document.body.classList.add('page-search');
+    } else if (newPage === 'docs') {
+      document.body.classList.add('page-api');
+    } else if (newPage === 'status') {
+      document.body.classList.add('page-config');
+    } else if (newPage === 'qqpd') {
+      document.body.classList.add('page-config');
+    } else if (newPage === 'gying') {
+      document.body.classList.add('page-config');
+    } else if (newPage === 'panlian') {
+      document.body.classList.add('page-config');
+    } else if (newPage === 'weibo') {
+      document.body.classList.add('page-config');
+    } else {
+      document.body.classList.add('page-config');
+    }
+  },
+  { immediate: true }
+);
+
 // 根据配置计算第二次、第三次搜索的src参数
 const calculateSrcForFullSearch = (): 'all' | 'tg' | 'plugin' => {
   try {
@@ -1147,6 +1181,9 @@ const handleForceRefresh = () => {
 
 // 组件加载时初始化
 onMounted(async () => {
+  // 全局启用 theme6（壁纸背景常驻）
+  document.body.classList.add('theme6');
+  
   // 首先初始化后端健康状态（只调用一次）
   await initBackendHealth();
   loadExportSettings();
@@ -1197,7 +1234,7 @@ onUnmounted(() => {
             </svg>
           </div>
           <div>
-            <h1 class="text-xl font-bold">PanSou</h1>
+            <h1 class="text-xl font-bold">PanHub</h1>
           </div>
         </div>
         
@@ -1352,12 +1389,12 @@ onUnmounted(() => {
       </div>
       
       <!-- 配置页面 -->
-      <div v-else-if="currentPage === 'status'" class="status-page">
+      <div v-else-if="currentPage === 'status'" class="status-page reset-page">
         <SearchConfig :backend-health="backendHealth" />
       </div>
       
       <!-- API文档页面 -->
-      <div v-else-if="currentPage === 'docs'" class="docs-page">
+      <div v-else-if="currentPage === 'docs'" class="docs-page reset-page">
         <ApiDocs />
       </div>
       
@@ -1395,12 +1432,6 @@ onUnmounted(() => {
         <div class="flex items-center justify-center gap-4 text-sm text-muted-foreground">
           <span>© {{ new Date().getFullYear() }}-{{ new Date().getFullYear() + 10 }}</span>
           <a href="https://dm.xueximeng.com/" target="_blank" rel="noopener noreferrer" class="hover:text-foreground transition-colors">美漫资源共建</a>
-          <a href="/report.html" target="_blank" rel="noopener noreferrer" class="hover:text-foreground transition-colors">实时监控</a>
-          <a href="https://github.com/fish2018" target="_blank" rel="noopener noreferrer" class="hover:text-foreground transition-colors">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
-            </svg>
-          </a>
         </div>
       </div>
     </footer>
@@ -1597,5 +1628,512 @@ footer button {
   font-size: inherit;
   color: inherit;
   cursor: pointer;
+}
+</style>
+
+<!-- theme6 全局样式（必须不带 scoped，否则无法覆盖子组件） -->
+<style>
+body.theme6 .bg-decorative {
+  display: none !important;
+}
+
+body.theme6 {
+  background: url('/wallpaper.png') no-repeat center center fixed !important;
+  background-size: cover !important;
+  background-color: transparent !important;
+}
+
+body.theme6 .app-shell {
+  background: none !important;
+  background-color: transparent !important;
+}
+
+/* API/配置页面恢复不透明背景 */
+body.theme6 .reset-page,
+body.theme6 .reset-page .main-content,
+body.theme6 .reset-page .status-page,
+body.theme6 .reset-page .docs-page {
+  background: hsl(var(--background)) !important;
+}
+
+body.theme6::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* 导航栏 - 极轻微毛玻璃 */
+body.theme6 .nav-header {
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+/* 搜索表单区域 - 极轻微 */
+body.theme6 .search-form-block,
+body.theme6 .search-stats-block,
+body.theme6 .search-loading-block,
+body.theme6 .search-results-block {
+  background: rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: blur(3px) !important;
+  -webkit-backdrop-filter: blur(3px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+  border-radius: 20px !important;
+}
+
+/* 搜索容器 - 透明 */
+body.theme6 .search-container {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 0 !important;
+}
+
+/* 搜索输入框 - 极轻微 */
+body.theme6 input:not([type="checkbox"]):not([type="radio"]),
+body.theme6 .input-search,
+body.theme6 .input {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  backdrop-filter: blur(2px) !important;
+  -webkit-backdrop-filter: blur(2px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #1a1a1a !important;
+  -webkit-text-fill-color: #1a1a1a !important;
+}
+
+body.theme6.page-search input::placeholder,
+body.theme6.page-search .input-search::placeholder {
+  color: rgba(0, 0, 0, 0.5) !important;
+  -webkit-text-fill-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* 高级选项面板 */
+body.theme6.page-search .advanced-panel {
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+body.theme6.page-search .filter-input {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #1a1a1a !important;
+  -webkit-text-fill-color: #1a1a1a !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+body.theme6.page-search .filter-input::placeholder {
+  color: rgba(0, 0, 0, 0.5) !important;
+  -webkit-text-fill-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* 搜索结果区域 */
+body.theme6.page-search .results-container {
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 16px !important;
+}
+
+/* 空状态和搜索中状态 */
+body.theme6.page-search .empty-state,
+body.theme6.page-search .searching-state {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+body.theme6.page-search .empty-icon {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+body.theme6.page-search .empty-title,
+body.theme6.page-search .searching-title {
+  color: #fff !important;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+body.theme6.page-search .empty-subtitle,
+body.theme6.page-search .searching-subtitle {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+body.theme6.page-search .searching-icon {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.theme6.page-search .searching-spinner {
+  border-color: rgba(255, 255, 255, 0.2);
+  border-top-color: #fff;
+}
+
+/* 标签页 */
+body.theme6.page-search .tabs {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+body.theme6.page-search .tab-button {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+body.theme6.page-search .tab-button:hover,
+body.theme6.page-search .tab-button.active {
+  color: #fff !important;
+}
+
+body.theme6.page-search .tab-button.active::after {
+  background-color: #fff !important;
+}
+
+/* 搜索结果项 */
+body.theme6.page-search .result-item {
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.theme6.page-search .result-item:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.theme6.page-search .result-title {
+  color: #fff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+body.theme6.page-search .result-source {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+body.theme6.page-search .result-date {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+body.theme6.page-search .result-link {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+body.theme6.page-search .result-password {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+body.theme6.page-search .password-value {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+body.theme6.page-search .meta-separator {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* 持续搜索提示 */
+body.theme6.page-search .ongoing-search-hint {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  border-top-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+body.theme6.page-search .hint-spinner {
+  border-color: rgba(255, 255, 255, 0.2);
+  border-top-color: #fff;
+}
+
+body.theme6.page-search .loading-more {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+body.theme6.page-search .loading-spinner {
+  border-color: rgba(255, 255, 255, 0.2);
+  border-top-color: #fff;
+}
+
+body.theme6.page-search .label-text,
+body.theme6.page-search .mode-text {
+  color: #1a1a1a !important;
+}
+
+/* 文字颜色 */
+body.theme6.page-search .text-foreground,
+body.theme6.page-search .text-card-foreground {
+  color: #fff !important;
+}
+
+body.theme6.page-search .text-muted-foreground {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+body.theme6.page-search .text-primary-foreground {
+  color: #fff !important;
+}
+
+body.theme6.page-search h1,
+body.theme6.page-search .font-bold {
+  color: #fff !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* 页脚 */
+body.theme6.page-search .footer-shell {
+  background-color: rgba(0, 0, 0, 0.2) !important;
+  backdrop-filter: blur(4px) !important;
+  border: none !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+body.theme6.page-search .footer-shell a {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+body.theme6.page-search .footer-shell a:hover {
+  color: #fff !important;
+}
+
+body.theme6.page-search .footer-shell button {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* 导航按钮 */
+body.theme6 .nav-button {
+  background-color: transparent !important;
+  color: hsl(var(--foreground)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+}
+
+body.theme6 .nav-button:hover,
+body.theme6 .nav-button.active {
+  background-color: hsl(var(--accent)) !important;
+  color: hsl(var(--accent-foreground)) !important;
+}
+
+body.theme6.page-search .nav-button {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+body.theme6.page-search .nav-button:hover,
+body.theme6.page-search .nav-button.active {
+  background-color: rgba(0, 0, 0, 0.25) !important;
+  color: #fff !important;
+}
+
+/* 卡片 */
+body.theme6.page-search .card,
+body.theme6.page-search .search-result-item {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03) !important;
+}
+
+body.theme6.page-search .card:hover,
+body.theme6.page-search .search-result-item:hover {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* 标签页 */
+body.theme6.page-search .tab-item {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+body.theme6.page-search .tab-item.active {
+  color: #fff !important;
+  background-color: rgba(0, 0, 0, 0.3) !important;
+}
+
+/* 滚动条 */
+body.theme6.page-search ::-webkit-scrollbar { width: 6px; height: 6px; }
+body.theme6.page-search ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.1); }
+body.theme6.page-search ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 3px; }
+body.theme6.page-search ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.5); }
+
+/* 入场动画 */
+body.theme6.page-search .card,
+body.theme6.page-search .search-result-item,
+body.theme6.page-search .search-form-block {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 移动端 */
+@media (max-width: 768px) {
+  body.theme6.page-search .app-shell {
+    background-attachment: scroll !important;
+  }
+  body.theme6.page-search .nav-header { padding: 0.5rem !important; }
+  body.theme6.page-search .search-form-block,
+  body.theme6.page-search .search-stats-block,
+  body.theme6.page-search .search-results-block { border-radius: 12px !important; }
+  body.theme6.page-search .container { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+  body.theme6.page-search .main-content { padding-top: 1rem !important; padding-bottom: 0.5rem !important; }
+  body.theme6.page-search .nav-button { padding: 0.5rem !important; min-width: 2.2rem !important; }
+  body.theme6.page-search .input-search { height: 2.5rem !important; font-size: 0.875rem !important; }
+  body.theme6.page-search h1 { font-size: 1rem !important; }
+  body.theme6.page-search .footer-shell .container > div { gap: 0.5rem !important; font-size: 0.75rem !important; }
+}
+
+/* ===== 页面模式覆盖（API 和配置页面保持正常外观） ===== */
+body.theme6 .reset-page .search-form-block,
+body.theme6 .reset-page .search-stats-block,
+body.theme6 .reset-page .search-results-block,
+body.theme6 .reset-page .search-container,
+body.theme6 .reset-page .results-container,
+body.theme6 .reset-page .card,
+body.theme6 .reset-page .search-result-item,
+body.theme6 .reset-page .advanced-panel {
+  background: hsl(var(--card)) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid hsl(var(--border)) !important;
+  box-shadow: none !important;
+  border-radius: var(--radius) !important;
+}
+
+body.theme6 .reset-page input:not([type="checkbox"]):not([type="radio"]),
+body.theme6 .reset-page .input-search,
+body.theme6 .reset-page .input,
+body.theme6 .reset-page .filter-input {
+  background-color: hsl(var(--background)) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid hsl(var(--border)) !important;
+  color: hsl(var(--foreground)) !important;
+  -webkit-text-fill-color: hsl(var(--foreground)) !important;
+}
+
+body.theme6 .reset-page input::placeholder,
+body.theme6 .reset-page .input-search::placeholder,
+body.theme6 .reset-page .filter-input::placeholder {
+  color: hsl(var(--muted-foreground)) !important;
+  -webkit-text-fill-color: hsl(var(--muted-foreground)) !important;
+}
+
+body.theme6 .reset-page .empty-icon {
+  background: hsl(var(--muted)) !important;
+}
+
+body.theme6 .reset-page .empty-title,
+body.theme6 .reset-page .searching-title {
+  color: hsl(var(--foreground)) !important;
+  text-shadow: none !important;
+}
+
+body.theme6 .reset-page .empty-subtitle,
+body.theme6 .reset-page .searching-subtitle {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+body.theme6 .reset-page .searching-spinner {
+  border-color: hsl(var(--muted));
+  border-top-color: hsl(var(--primary));
+}
+
+body.theme6 .reset-page .hint-spinner {
+  border-color: hsl(var(--muted));
+  border-top-color: hsl(var(--primary));
+}
+
+body.theme6 .reset-page .loading-more {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+body.theme6 .reset-page .loading-spinner {
+  border-color: hsl(var(--muted));
+  border-top-color: hsl(var(--primary));
+}
+
+body.theme6 .reset-page .result-item {
+  border-bottom-color: hsl(var(--border)) !important;
+}
+
+body.theme6 .reset-page .result-item:hover {
+  background: hsl(var(--accent)) !important;
+}
+
+body.theme6 .reset-page .result-title {
+  color: hsl(var(--foreground)) !important;
+  text-shadow: none !important;
+}
+
+body.theme6 .reset-page .result-source {
+  background: hsl(var(--muted)) !important;
+  color: hsl(var(--muted-foreground)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+
+body.theme6 .reset-page .result-date {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+body.theme6 .reset-page .result-link {
+  color: hsl(var(--primary)) !important;
+}
+
+body.theme6 .reset-page .result-password {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+body.theme6 .reset-page .password-value {
+  color: hsl(var(--foreground)) !important;
+}
+
+body.theme6 .reset-page .meta-separator {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+body.theme6 .reset-page .ongoing-search-hint {
+  background: hsl(var(--muted)) !important;
+  color: hsl(var(--muted-foreground)) !important;
+  border-top-color: hsl(var(--border)) !important;
+}
+
+body.theme6 .reset-page .label-text,
+body.theme6 .reset-page .mode-text {
+  color: hsl(var(--foreground)) !important;
+}
+
+body.theme6 .reset-page .nav-button {
+  background-color: hsl(var(--background)) !important;
+  color: hsl(var(--foreground)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+}
+
+body.theme6 .reset-page .nav-button:hover,
+body.theme6 .reset-page .nav-button.active {
+  background-color: hsl(var(--accent)) !important;
+  color: hsl(var(--accent-foreground)) !important;
+}
+
+body.theme6 .reset-page .tabs {
+  background: hsl(var(--background)) !important;
+  border-bottom-color: hsl(var(--border)) !important;
+}
+
+body.theme6 .reset-page .tab-button {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+body.theme6 .reset-page .tab-button:hover,
+body.theme6 .reset-page .tab-button.active {
+  color: hsl(var(--foreground)) !important;
+}
+
+body.theme6 .reset-page .tab-button.active::after {
+  background-color: hsl(var(--primary)) !important;
 }
 </style>
