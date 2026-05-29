@@ -2,12 +2,12 @@ version: '3.3'
 
 services:
   pansou:
-    image: ghcr.io/fish2018/pansou-web:latest
+    image: ghcr.io/niu2010/pansou-web:latest
     container_name: pansou-app
     labels:
       - "autoheal=true"  # 标记此容器允许被autoheal重启
     ports:
-      - "80:80"
+      - "8888:80"
     environment:
       # 基础配置
       - DOMAIN=localhost
